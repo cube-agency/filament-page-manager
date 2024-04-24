@@ -1,0 +1,13 @@
+<?php
+
+//use App\Filament\Templates\MainTemplate;
+//use App\Http\Controllers\MainPageController;
+use CubeAgency\FilamentPageManager\Models\Page;
+use CubeAgency\FilamentPageManager\Services\PageRoutes;
+use Illuminate\Support\Facades\Route;
+
+/*PageRoutes::for(MainTemplate::class, static function (Page $page) {
+    Route::get($page->getUri(), ['pageId' => $page->getKey()])
+        ->uses([MainPageController::class, 'index'])
+        ->name('index');
+});*/
