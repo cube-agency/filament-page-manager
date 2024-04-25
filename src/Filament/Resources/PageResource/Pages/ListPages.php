@@ -3,6 +3,7 @@
 namespace CubeAgency\FilamentPageManager\Filament\Resources\PageResource\Pages;
 
 use CubeAgency\FilamentPageManager\Filament\Resources\PageResource;
+use CubeAgency\FilamentPageManager\Services\PageRoutesCache;
 use CubeAgency\FilamentPageManager\Services\SlugGenerator;
 use CubeAgency\FilamentTreeView\Resources\Pages\TreeViewRecords;
 use Filament\Actions\Action;
@@ -72,10 +73,9 @@ class ListPages extends TreeViewRecords
                     'slug' => SlugGenerator::generate($row, $row->slug),
                 ])->save();
 
-                Artisan::call('route:cache');
-
                 $this->redirect(static::$resource::getUrl());
-            });
+            })
+            ->after(fn() => PageRoutesCache::setLastUpdateTimestamp(time()));
     }
 
     public function deleteAction(): Action
@@ -89,10 +89,9 @@ class ListPages extends TreeViewRecords
 
                 $row?->delete();
 
-                Artisan::call('route:cache');
-
                 $this->redirect(static::$resource::getUrl());
-            });
+            })
+            ->after(fn() => PageRoutesCache::setLastUpdateTimestamp(time()));
     }
 
     protected function getTemplates(): Collection

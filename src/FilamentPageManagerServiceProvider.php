@@ -2,11 +2,15 @@
 
 namespace CubeAgency\FilamentPageManager;
 
+use CubeAgency\FilamentPageManager\Commands\RouteCacheCommand;
+use CubeAgency\FilamentPageManager\Services\PageRoutesCache;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -23,6 +27,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name(static::$name)
+            ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()
@@ -56,6 +61,9 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
             $this->getAssets(),
             $this->getAssetPackageName()
         );
+
+        $this->purgeOutdatedRouteCache();
+        $this->refreshObsoleteRouteCache();
     }
 
     protected function getAssetPackageName(): ?string
@@ -102,5 +110,34 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
         $stub = (string)$stub;
 
         $this->writeFile($targetPath, $stub);
+    }
+
+    protected function purgeOutdatedRouteCache(): void
+    {
+        if (!config('arbory.clear_obsolete_route_cache')) {
+            return;
+        }
+
+        if ($this->app->routesAreCached() && PageRoutesCache::isRouteCacheObsolete()) {
+            PageRoutesCache::clearCache();
+        }
+    }
+
+    protected function refreshObsoleteRouteCache(): void
+    {
+        if (!config('filament-page-manager.refresh_route_cache')) {
+            return;
+        }
+
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            $schedule->command('filament-page-manager:route-cache')->everyMinute();
+        });
+    }
+
+    protected function getCommands(): array
+    {
+        return [
+            RouteCacheCommand::class,
+        ];
     }
 }
