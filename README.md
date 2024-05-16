@@ -63,8 +63,8 @@ You need to register this routes file in Laravel in bootstrap/app.php
 ->withRouting(
         ...
         then: function () {
-            Route::middleware('web')
-                ->group(base_path('routes/pages.php'));
+            Route::middleware('web')->group(base_path('routes/pages.php'));
+            PageRoutes::register();
         },
     )
 ```

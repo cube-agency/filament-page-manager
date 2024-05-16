@@ -10,21 +10,29 @@ use CubeAgency\FilamentPageManager\Models\Page;
 
 class PageRoutes
 {
+    protected static array $registry = [];
+
     public static function for(string $page, Closure $routes): void
     {
         if (!self::isDatabaseConfigured()) {
             return;
         }
 
-        Page::query()
-            ->where('template', $page)
-            ->get()
-            ->map(function ($templatePage) use ($routes) {
-                Route::name(config('filament-page-manager.route_name_prefix') . '.' . $templatePage->getKey() . '.')
-                    ->group(function () use ($routes, $templatePage) {
-                        $routes($templatePage);
+        self::$registry[$page] = $routes;
+    }
+
+    public static function register(): void
+    {
+        $pages = Page::all();
+        $leftName = $pages->first()?->getLftName() ?? '_lft';
+        $pages->sortByDesc($leftName)->each(function ($page) {
+            if (isset(self::$registry[$page->template])) {
+                Route::name(config('filament-page-manager.route_name_prefix') . '.' . $page->getKey() . '.')
+                    ->group(function () use ($page) {
+                        self::$registry[$page->template]($page);
                     });
-            });
+            }
+        });
     }
 
     protected static function isDatabaseConfigured(): bool
