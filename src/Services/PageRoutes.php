@@ -23,9 +23,10 @@ class PageRoutes
 
     public static function register(): void
     {
+        $orderByColumnName = config('filament-page-manager.order_by_column_name', '_lft');
         Page::query()
-            ->orderByDesc(config('filament-page-manager.order_by_column_name', '_lft'))
-            ->get()
+            ->orderByDesc($orderByColumnName)
+            ->get(['id', $orderByColumnName, 'parent_id', 'name', 'slug', 'template', 'activate_at'])
             ->each(function ($page) {
                 if (isset(self::$registry[$page->template])) {
                     Route::name(config('filament-page-manager.route_name_prefix') . '.' . $page->getKey() . '.')
