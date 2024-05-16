@@ -23,16 +23,17 @@ class PageRoutes
 
     public static function register(): void
     {
-        $pages = Page::all();
-        $leftName = $pages->first()?->getLftName() ?? '_lft';
-        $pages->sortByDesc($leftName)->each(function ($page) {
-            if (isset(self::$registry[$page->template])) {
-                Route::name(config('filament-page-manager.route_name_prefix') . '.' . $page->getKey() . '.')
-                    ->group(function () use ($page) {
-                        self::$registry[$page->template]($page);
-                    });
-            }
-        });
+        Page::query()
+            ->orderByDesc(config('filament-page-manager.order_by_column_name', '_lft'))
+            ->get()
+            ->each(function ($page) {
+                if (isset(self::$registry[$page->template])) {
+                    Route::name(config('filament-page-manager.route_name_prefix') . '.' . $page->getKey() . '.')
+                        ->group(function () use ($page) {
+                            self::$registry[$page->template]($page);
+                        });
+                }
+            });
     }
 
     protected static function isDatabaseConfigured(): bool
