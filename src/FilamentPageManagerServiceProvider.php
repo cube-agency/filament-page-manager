@@ -3,6 +3,7 @@
 namespace CubeAgency\FilamentPageManager;
 
 use CubeAgency\FilamentPageManager\Commands\RouteCacheCommand;
+use CubeAgency\FilamentPageManager\Services\PageRoutes;
 use CubeAgency\FilamentPageManager\Services\PageRoutesCache;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -10,7 +11,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -62,8 +63,32 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
             $this->getAssetPackageName()
         );
 
+        $this->registerRoutes();
+        $this->registerPages();
         $this->purgeOutdatedRouteCache();
         $this->refreshObsoleteRouteCache();
+    }
+
+    protected function registerRoutes(): void
+    {
+        $path = base_path('routes/pages.php');
+
+        if (!File::exists($path)) {
+            return;
+        }
+
+        $this->app['router']->group([
+            'middleware' => 'web',
+        ], function () use ($path) {
+            include $path;
+        });
+    }
+
+    protected function registerPages(): void
+    {
+        if (!$this->app->routesAreCached()) {
+            PageRoutes::register();
+        }
     }
 
     protected function getAssetPackageName(): ?string

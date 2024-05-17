@@ -23,9 +23,8 @@ class PageRoutes
 
     public static function register(): void
     {
-        $orderByColumnName = config('filament-page-manager.order_by_column_name', '_lft');
         Page::query()
-            ->orderByDesc($orderByColumnName)
+            ->orderByDesc('_lft')
             ->get()
             ->each(function ($page) {
                 if (isset(self::$registry[$page->template])) {
