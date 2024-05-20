@@ -57,17 +57,6 @@ return [
 ];
 ```
 
-Install command will create routes/pages.php file, where you can register routes for your templates
-You need to register this routes file in Laravel in bootstrap/app.php
-```php
-->withRouting(
-        ...
-        then: function () {
-            Route::middleware('web')
-                ->group(base_path('routes/pages.php'));
-        },
-    )
-```
 ## Testing
 
 ```bash
