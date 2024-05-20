@@ -14,15 +14,15 @@ class PageRoutes
 
     public static function for(string $page, Closure $routes): void
     {
-        if (!self::isDatabaseConfigured()) {
-            return;
-        }
-
         self::$registry[$page] = $routes;
     }
 
     public static function register(): void
     {
+        if (!self::isDatabaseConfigured()) {
+            return;
+        }
+
         Page::query()
             ->orderByDesc('_lft')
             ->get()
