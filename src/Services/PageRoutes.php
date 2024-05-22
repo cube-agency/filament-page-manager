@@ -3,10 +3,10 @@
 namespace CubeAgency\FilamentPageManager\Services;
 
 use Closure;
+use CubeAgency\FilamentPageManager\Models\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use CubeAgency\FilamentPageManager\Models\Page;
 
 class PageRoutes
 {
@@ -19,7 +19,7 @@ class PageRoutes
 
     public static function register(): void
     {
-        if (!self::isDatabaseConfigured()) {
+        if (! self::isDatabaseConfigured()) {
             return;
         }
 
@@ -29,6 +29,7 @@ class PageRoutes
             ->each(function ($page) {
                 if (isset(self::$registry[$page->template])) {
                     Route::name(config('filament-page-manager.route_name_prefix') . '.' . $page->getKey() . '.')
+                        ->middleware(config('filament-page-manager.route_middleware', ['web']))
                         ->group(function () use ($page) {
                             self::$registry[$page->template]($page);
                         });

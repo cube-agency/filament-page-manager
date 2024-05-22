@@ -73,20 +73,16 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
     {
         $path = base_path('routes/pages.php');
 
-        if (!File::exists($path)) {
+        if (! File::exists($path)) {
             return;
         }
 
-        $this->app['router']->group([
-            'middleware' => 'web',
-        ], function () use ($path) {
-            include $path;
-        });
+        $this->loadRoutesFrom($path);
     }
 
     protected function registerPages(): void
     {
-        if (!$this->app->routesAreCached()) {
+        if (! $this->app->routesAreCached()) {
             PageRoutes::register();
         }
     }
@@ -126,20 +122,20 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
     {
         $filesystem = app(Filesystem::class);
 
-        if (!$this->fileExists($stubPath = base_path("stubs/{$stub}.stub"))) {
+        if (! $this->fileExists($stubPath = base_path("stubs/{$stub}.stub"))) {
             $stubPath = __DIR__ . "/../stubs/{$stub}.stub";
         }
 
         $stub = Str::of($filesystem->get($stubPath));
 
-        $stub = (string)$stub;
+        $stub = (string) $stub;
 
         $this->writeFile($targetPath, $stub);
     }
 
     protected function purgeOutdatedRouteCache(): void
     {
-        if (!config('arbory.clear_obsolete_route_cache')) {
+        if (! config('arbory.clear_obsolete_route_cache')) {
             return;
         }
 
@@ -150,7 +146,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
 
     protected function refreshObsoleteRouteCache(): void
     {
-        if (!config('filament-page-manager.refresh_route_cache')) {
+        if (! config('filament-page-manager.refresh_route_cache')) {
             return;
         }
 
