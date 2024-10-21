@@ -11,7 +11,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 class ListPages extends TreeViewRecords
@@ -22,6 +21,7 @@ class ListPages extends TreeViewRecords
     {
         return [
             Action::make('create')
+                ->authorize(fn () => $this->hasPermissions ? static::getResource()::canCreate() : true)
                 ->form($this->actionForm())
                 ->action(function (array $data): void {
                     $parameters = http_build_query($data);
@@ -34,16 +34,17 @@ class ListPages extends TreeViewRecords
     public function getRowActions(Model $row): array
     {
         return [
-            ($this->createChildAction())(['row' => $row->getKey()]),
-            ($this->cloneAction())(['row' => $row->getKey()]),
-            ($this->editAction())(['row' => $row->getKey()]),
-            ($this->deleteAction())(['row' => $row->getKey()]),
+            ($this->createChildAction())(['row' => $row]),
+            ($this->replicateAction())(['row' => $row]),
+            ($this->editAction())(['row' => $row]),
+            ($this->deleteAction())(['row' => $row]),
         ];
     }
 
     public function createChildAction(): Action
     {
         return Action::make('createChild')
+            ->authorize(fn () => $this->hasPermissions ? static::getResource()::canCreate() : true)
             ->fillForm(function (array $data, array $arguments) {
                 $data['parentId'] = $arguments['row'];
 
@@ -57,12 +58,18 @@ class ListPages extends TreeViewRecords
             });
     }
 
-    public function cloneAction(): Action
+    public function replicateAction(): Action
     {
-        return Action::make('clone')
+        return Action::make('replicate')
+            ->authorize(function (array $arguments) {
+                $model = app(static::getModel());
+                $row = $model->newInstance($arguments['row']);
+
+                return $this->hasPermissions ? static::getResource()::canReplicate($row) : true;
+            })
             ->requiresConfirmation()
             ->action(function (array $arguments) {
-                $row = $this->getModel()::find($arguments['row']);
+                $row = $this->getModel()::find($arguments['row']['id']);
 
                 $newRow = $row->replicate();
                 if ($row->parent) {
@@ -75,23 +82,29 @@ class ListPages extends TreeViewRecords
 
                 $this->redirect(static::$resource::getUrl());
             })
-            ->after(fn() => PageRoutesCache::setLastUpdateTimestamp(time()));
+            ->after(fn () => PageRoutesCache::setLastUpdateTimestamp(time()));
     }
 
     public function deleteAction(): Action
     {
         return Action::make('delete')
+            ->authorize(function (array $arguments) {
+                $model = app(static::getModel());
+                $row = $model->newInstance($arguments['row']);
+
+                return $this->hasPermissions ? static::getResource()::canDelete($row) : true;
+            })
             ->requiresConfirmation()
             ->color('danger')
             ->modalIcon('heroicon-o-trash')
             ->action(function (array $arguments) {
-                $row = $this->getModel()::find($arguments['row']);
+                $row = $this->getModel()::find($arguments['row']['id']);
 
                 $row?->delete();
 
                 $this->redirect(static::$resource::getUrl());
             })
-            ->after(fn() => PageRoutesCache::setLastUpdateTimestamp(time()));
+            ->after(fn () => PageRoutesCache::setLastUpdateTimestamp(time()));
     }
 
     protected function getTemplates(): Collection
