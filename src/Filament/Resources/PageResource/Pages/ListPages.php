@@ -46,7 +46,7 @@ class ListPages extends TreeViewRecords
         return Action::make('createChild')
             ->authorize(fn () => $this->hasPermissions ? static::getResource()::canCreate() : true)
             ->fillForm(function (array $data, array $arguments) {
-                $data['parentId'] = $arguments['row'];
+                $data['parentId'] = $arguments['row']['id'];
 
                 return $data;
             })
