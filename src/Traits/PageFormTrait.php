@@ -18,6 +18,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
@@ -36,7 +37,11 @@ trait PageFormTrait
                                 TextInput::make('name')
                                     ->required()
                                     ->live(debounce: 500)
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                                    ->afterStateUpdated(function (Set $set, ?string $state, string $context) {
+                                        if ($context == 'create') {
+                                            $set('slug', Str::slug($state));
+                                        }
+                                    }),
 
                                 TextInput::make('slug')
                                     ->prefix(function ($record) {
@@ -46,11 +51,18 @@ trait PageFormTrait
                                     })
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(function ($state, callable $set) {
+                                    ->afterStateUpdated(function (Set $set, ?string $state) {
                                         $set('slug', Str::slug($state));
                                     })
                                     ->unique(Page::class, 'slug', fn ($record) => $record)
-                                    ->suffixAction(
+                                    ->suffixActions([
+                                        Action::make('refresh')
+                                            ->icon('heroicon-m-arrow-path')
+                                            ->action(function (Set $set, Get $get) {
+                                                $set('slug', Str::slug($get('name')));
+                                            })
+                                            ->visible(fn ($context) => $context === 'edit'),
+
                                         Action::make('copy')
                                             ->icon('heroicon-m-clipboard')
                                             ->alpineClickHandler(function ($record, $state) {
@@ -62,7 +74,7 @@ trait PageFormTrait
                                                     $tooltip(\'Copied\', {theme: $store.theme, timeout: 2000})
                                                 ';
                                             }),
-                                    )
+                                    ])
                                     ->helperText(function ($record, $state) {
                                         if (! $record) {
                                             return '';
@@ -151,9 +163,9 @@ trait PageFormTrait
         $state = $state === '/' ? '' : $state;
 
         if ($record) {
-            return $record->getFullUrl($withThis) . $state;
+            return e($record->getFullUrl($withThis) . $state);
         }
 
-        return config('app.url') . '/' . $state;
+        return e(config('app.url') . '/' . $state);
     }
 }
