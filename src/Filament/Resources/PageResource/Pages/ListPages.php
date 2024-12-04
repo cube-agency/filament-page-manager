@@ -111,9 +111,9 @@ class ListPages extends TreeViewRecords
     {
         return collect(config('filament-template.pages', []))->mapWithKeys(function ($template) {
             $templateName = explode('\\', $template);
-            $templateName = Str::of(end($templateName))->replace('Template', '');
+            $templateName = Str::of(end($templateName))->replace('Template', '')->toString();
 
-            return [$template => end($templateName)];
+            return [$template => $templateName];
         });
     }
 

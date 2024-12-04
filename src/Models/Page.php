@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
 
 class Page extends Model
 {
+    use HasActivationDates;
     use HasFactory;
     use NodeTrait;
-    use HasActivationDates;
 
     public function __construct(array $attributes = [])
     {
@@ -31,17 +32,17 @@ class Page extends Model
         'content',
         'meta',
         'activate_at',
-        'expire_at'
+        'expire_at',
     ];
 
     protected $casts = [
         'content' => 'array',
-        'meta' => 'array'
+        'meta' => 'array',
     ];
 
     public function isChild(): bool
     {
-        return !is_null($this->parent_id);
+        return ! is_null($this->parent_id);
     }
 
     public function parents(): Collection
@@ -64,12 +65,29 @@ class Page extends Model
         return implode('/', $uri);
     }
 
+    public function getFullUrl(bool $withThis = true): string
+    {
+        $uri = [config('app.url')];
+
+        foreach ($this->parents() as $parent) {
+            $uri[] = Str::replace('/', '', $parent->slug);
+        }
+
+        if ($withThis) {
+            $uri[] = $this->slug;
+        }
+
+        $uri = array_filter($uri);
+
+        return implode('/', $uri) . '/';
+    }
+
     public function getRouteName(string $actionName = 'index'): string
     {
         return implode('.', [
             config('filament-page-manager.route_name_prefix'),
             $this->getKey(),
-            $actionName
+            $actionName,
         ]);
     }
 
