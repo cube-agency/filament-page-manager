@@ -57,6 +57,23 @@ return [
 ];
 ```
 
+## Customization
+
+You can create your own PageResource and override default one in AdminPanelProvider:
+```php
+use CubeAgency\FilamentPageManager\FilamentPageManagerPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugins([
+            FilamentPageManagerPlugin::make()
+                ->resource(\App\Filament\Resources\PageResource::class),
+        ]);
+}
+```
+
 ## Testing
 
 ```bash
