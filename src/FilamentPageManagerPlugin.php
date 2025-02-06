@@ -2,18 +2,14 @@
 
 namespace CubeAgency\FilamentPageManager;
 
-use Closure;
 use CubeAgency\FilamentPageManager\Filament\Resources\PageResource;
 use Filament\Contracts\Plugin;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Panel;
 
 class FilamentPageManagerPlugin implements Plugin
 {
+    protected string $resource = PageResource::class;
+
     public function getId(): string
     {
         return 'filament-page-manager';
@@ -23,7 +19,7 @@ class FilamentPageManagerPlugin implements Plugin
     {
         $panel
             ->resources([
-                PageResource::class,
+                $this->getResource(),
             ]);
     }
 
@@ -43,5 +39,17 @@ class FilamentPageManagerPlugin implements Plugin
         $plugin = filament(app(static::class)->getId());
 
         return $plugin;
+    }
+
+    public function getResource(): string
+    {
+        return $this->resource;
+    }
+
+    public function resource(string $resource): static
+    {
+        $this->resource = $resource;
+
+        return $this;
     }
 }
