@@ -4,6 +4,7 @@ namespace CubeAgency\FilamentPageManager\Traits;
 
 use CubeAgency\FilamentJson\Filament\Forms\Components\Json;
 use CubeAgency\FilamentPageManager\Models\Page;
+use CubeAgency\FilamentTemplate\Exceptions\TemplateNotFoundException;
 use CubeAgency\FilamentTemplate\FilamentTemplate;
 use CubeAgency\FilamentTemplate\Forms\Components\Template;
 use Filament\Forms\Components\Actions\Action;
@@ -21,7 +22,6 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 trait PageFormTrait
@@ -38,7 +38,7 @@ trait PageFormTrait
                                     ->required()
                                     ->live(debounce: 500)
                                     ->afterStateUpdated(function (Set $set, ?string $state, string $context) {
-                                        if ($context == 'create') {
+                                        if ($context === 'create') {
                                             $set('slug', Str::slug($state));
                                         }
                                     }),
@@ -65,14 +65,12 @@ trait PageFormTrait
 
                                         Action::make('copy')
                                             ->icon('heroicon-m-clipboard')
-                                            ->alpineClickHandler(function ($record, $state) {
+                                            ->extraAttributes(['x-data' => 'pageManager'])
+                                            ->action(function ($record, $state) {
                                                 $currentRecord = $this->getCurrentRecord($record);
                                                 $url = $this->getRecordUrl(record: $currentRecord, state: $state, withThis: ! $record);
 
-                                                return '
-                                                    window.navigator.clipboard.writeText("' . $url . '");
-                                                    $tooltip(\'Copied\', {theme: $store.theme, timeout: 2000})
-                                                ';
+                                                $this->dispatch('filament-page-manager::copy-url', url: $url);
                                             }),
                                     ])
                                     ->helperText(function ($record, $state) {
@@ -83,7 +81,7 @@ trait PageFormTrait
                                         $currentRecord = $this->getCurrentRecord($record);
                                         $url = $this->getRecordUrl(record: $currentRecord, state: $state);
 
-                                        return new HtmlString('<a href="' . $url . '" class="text-primary-600" target="_blank">' . $url . '</a>');
+                                        return view('filament-page-manager::partials.url', ['url' => $url]);
                                     }),
 
                                 Json::make('meta')
@@ -139,8 +137,15 @@ trait PageFormTrait
             ])->columns(12);
     }
 
+    /**
+     * @throws TemplateNotFoundException
+     */
     protected function resolveTemplate(): FilamentTemplate
     {
+        if (! $this->getTemplate()) {
+            throw new TemplateNotFoundException('Template not found');
+        }
+
         return resolve($this->getTemplate());
     }
 
@@ -150,7 +155,7 @@ trait PageFormTrait
             return $this->template;
         }
 
-        return $this->getRecord()->getAttribute('template');
+        return $this->getRecord()?->getAttribute('template');
     }
 
     protected function getCurrentRecord(?Model $record = null): ?Model
@@ -158,7 +163,7 @@ trait PageFormTrait
         return $record ?? ($this->parentId ? Page::find($this->parentId) : null);
     }
 
-    protected function getRecordUrl(?Model $record = null, $state = null, ?bool $withThis = false)
+    protected function getRecordUrl(?Model $record = null, $state = null, ?bool $withThis = false): string
     {
         $state = $state === '/' ? '' : $state;
 

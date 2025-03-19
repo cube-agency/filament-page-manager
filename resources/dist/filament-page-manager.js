@@ -1,0 +1,1 @@
+document.addEventListener("alpine:initializing",()=>{window.Alpine.data("pageManager",()=>({init(){window.addEventListener("filament-page-manager::copy-url",i=>{this.copyUrl(i.detail.url)})},copyUrl(i){window.navigator.clipboard.writeText(i),this.$tooltip("Copied",{theme:window.Alpine.store("theme"),timeout:2e3})}}))});

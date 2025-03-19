@@ -7,6 +7,7 @@ use CubeAgency\FilamentPageManager\Services\PageRoutes;
 use CubeAgency\FilamentPageManager\Services\PageRoutesCache;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Console\Scheduling\Schedule;
@@ -48,6 +49,10 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
 
         if (file_exists($package->basePath('/../database/migrations'))) {
             $package->hasMigrations($this->getMigrations());
+        }
+
+        if (file_exists($package->basePath('/../resources/views'))) {
+            $package->hasViews(static::$viewNamespace);
         }
     }
 
@@ -99,6 +104,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
     {
         return [
             Css::make('filament-page-manager-styles', __DIR__ . '/../resources/dist/filament-page-manager.css'),
+            Js::make('filament-page-manager-scripts', __DIR__ . '/../resources/dist/filament-page-manager.js'),
         ];
     }
 
