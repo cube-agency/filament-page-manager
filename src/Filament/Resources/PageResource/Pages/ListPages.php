@@ -61,7 +61,13 @@ class ListPages extends TreeViewRecords
     public function replicateAction(): Action
     {
         return Action::make('replicate')
-            ->authorize(fn (array $arguments) => $this->canReplicate($arguments['row']))
+            ->authorize(function (array $arguments) {
+                $model = app(static::getModel());
+                $row = $model->newInstance($arguments['row'])
+                    ->forceFill(['id' => $arguments['row']['id']]);
+
+                return $this->canReplicate($row);
+            })
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $row = $this->getModel()::find($arguments['row']['id']);
@@ -97,7 +103,13 @@ class ListPages extends TreeViewRecords
     public function deleteAction(): Action
     {
         return Action::make('delete')
-            ->authorize(fn (array $arguments) => $this->canDelete($arguments['row']))
+            ->authorize(function (array $arguments) {
+                $model = app(static::getModel());
+                $row = $model->newInstance($arguments['row'])
+                    ->forceFill(['id' => $arguments['row']['id']]);
+
+                return $this->canDelete($row);
+            })
             ->requiresConfirmation()
             ->color('danger')
             ->modalIcon('heroicon-o-trash')
