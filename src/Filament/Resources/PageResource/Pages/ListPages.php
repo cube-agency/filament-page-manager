@@ -92,7 +92,7 @@ class ListPages extends TreeViewRecords
             return true;
         }
 
-        if (!$this->hasUserOnyPolicy) {
+        if (!$this->hasUserOnlyPolicy) {
             return static::getResource()::canReplicate($row);
         }
 
