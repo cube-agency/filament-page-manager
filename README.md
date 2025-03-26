@@ -42,7 +42,7 @@ php artisan vendor:publish --tag="filament-page-manager-config"
 * **route_name_prefix**: Prefix applied to generated route names.
 * **route_middleware**: Middleware applied to page routes.
 * **clear_obsolete_route_cache**: When set to true, clears obsolete routes from the cache (requires scheduler).
-* **refresh_route_cache**: When set to true, route cache will be refreshed after changes.
+* **refresh_route_cache**: When set to true, the route cache will be refreshed after changes.
 
 ## Usage
 
