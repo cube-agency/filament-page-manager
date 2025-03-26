@@ -21,7 +21,7 @@ class ListPages extends TreeViewRecords
     {
         return [
             Action::make('create')
-                ->authorize(fn () => $this->hasPermissions ? static::getResource()::canCreate() : true)
+                ->authorize(fn () => $this->canCreate())
                 ->form($this->actionForm())
                 ->action(function (array $data): void {
                     $parameters = http_build_query($data);
@@ -44,7 +44,7 @@ class ListPages extends TreeViewRecords
     public function createChildAction(): Action
     {
         return Action::make('createChild')
-            ->authorize(fn () => $this->hasPermissions ? static::getResource()::canCreate() : true)
+            ->authorize(fn () => $this->canCreate())
             ->fillForm(function (array $data, array $arguments) {
                 $data['parentId'] = $arguments['row']['id'];
 
@@ -63,9 +63,10 @@ class ListPages extends TreeViewRecords
         return Action::make('replicate')
             ->authorize(function (array $arguments) {
                 $model = app(static::getModel());
-                $row = $model->newInstance($arguments['row']);
+                $row = $model->newInstance($arguments['row'])
+                    ->forceFill(['id' => $arguments['row']['id']]);
 
-                return $this->hasPermissions ? static::getResource()::canReplicate($row) : true;
+                return $this->canReplicate($row);
             })
             ->requiresConfirmation()
             ->action(function (array $arguments) {
@@ -85,14 +86,29 @@ class ListPages extends TreeViewRecords
             ->after(fn () => PageRoutesCache::setLastUpdateTimestamp(time()));
     }
 
+    public function canReplicate(Model $row): bool
+    {
+        if (!$this->hasPermissions) {
+            return true;
+        }
+
+        if (!$this->hasUserOnlyPolicy) {
+            return static::getResource()::canReplicate($row);
+        }
+
+        return $this->permissionsCache['canReplicate'] = $this->permissionsCache['canReplicate']
+            ?? static::getResource()::canReplicate($row);
+    }
+
     public function deleteAction(): Action
     {
         return Action::make('delete')
             ->authorize(function (array $arguments) {
                 $model = app(static::getModel());
-                $row = $model->newInstance($arguments['row']);
+                $row = $model->newInstance($arguments['row'])
+                    ->forceFill(['id' => $arguments['row']['id']]);
 
-                return $this->hasPermissions ? static::getResource()::canDelete($row) : true;
+                return $this->canDelete($row);
             })
             ->requiresConfirmation()
             ->color('danger')

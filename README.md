@@ -28,6 +28,22 @@ Run migrations (if that was not done on install):
 php artisan migrate
 ```
 
+## Configuration
+
+You can publish the config file with:
+
+```bash
+php artisan vendor:publish --tag="filament-page-manager-config"
+```
+
+## Available Configuration Options
+
+* **table_name**: The database table name used for pages.
+* **route_name_prefix**: Prefix applied to generated route names.
+* **route_middleware**: Middleware applied to page routes.
+* **clear_obsolete_route_cache**: When set to true, clears obsolete routes from the cache (requires scheduler).
+* **refresh_route_cache**: When set to true, the route cache will be refreshed after changes.
+
 ## Usage
 
 Add this plugin to your AdminPanelProvider
