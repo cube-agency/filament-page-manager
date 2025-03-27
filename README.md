@@ -43,6 +43,7 @@ php artisan vendor:publish --tag="filament-page-manager-config"
 * **route_middleware**: Middleware applied to page routes.
 * **clear_obsolete_route_cache**: When set to true, clears obsolete routes from the cache (requires scheduler).
 * **refresh_route_cache**: When set to true, the route cache will be refreshed after changes.
+* **max_depth**: Controls the maximum nesting level of the tree view for pages.
 
 ## Usage
 
