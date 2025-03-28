@@ -8,4 +8,6 @@ return [
 
     'clear_obsolete_route_cache' => true,
     'refresh_route_cache' => true,
+
+    'max_depth' => 5,
 ];

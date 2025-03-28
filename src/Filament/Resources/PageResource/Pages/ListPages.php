@@ -157,4 +157,9 @@ class ListPages extends TreeViewRecords
 
         return Str::of(end($template))->replace('Template', '');
     }
+
+    public function getMaxDepth(): int
+    {
+        return config('filament-page-manager.max_depth');
+    }
 }
