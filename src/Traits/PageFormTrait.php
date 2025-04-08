@@ -50,9 +50,11 @@ trait PageFormTrait
                                         return $this->getRecordUrl(record: $currentRecord, withThis: ! $record);
                                     })
                                     ->required()
-                                    ->reactive()
+                                    ->live(debounce: 500)
                                     ->afterStateUpdated(function (Set $set, ?string $state) {
-                                        $set('slug', Str::slug($state));
+                                        if ($state !== '/' && $state !== Str::slug($state)) {
+                                            $set('slug', Str::slug($state));
+                                        }
                                     })
                                     ->unique(Page::class, 'slug', fn ($record) => $record)
                                     ->suffixActions([
