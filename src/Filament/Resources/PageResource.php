@@ -10,9 +10,12 @@ use Filament\Resources\Resource;
 
 class PageResource extends Resource
 {
-    protected static ?string $model = Page::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function getModel(): string
+    {
+        return config('filament-page-manager.model', Page::class);
+    }
 
     public static function getPages(): array
     {
