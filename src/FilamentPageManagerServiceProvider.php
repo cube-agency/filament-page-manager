@@ -56,10 +56,6 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function packageRegistered(): void
-    {
-    }
-
     public function packageBooted(): void
     {
         // Asset Registration
@@ -70,14 +66,18 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
 
         $this->registerRoutes();
         $this->registerPages();
+
         $this->purgeOutdatedRouteCache();
         $this->refreshObsoleteRouteCache();
     }
 
     protected function registerRoutes(): void
     {
-        $path = base_path('routes/pages.php');
+        if (! config('filament-page-manager.register_routes', true)) {
+            return;
+        }
 
+        $path = base_path('routes/pages.php');
         if (! File::exists($path)) {
             return;
         }
@@ -87,6 +87,10 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
 
     protected function registerPages(): void
     {
+        if (! config('filament-page-manager.register_pages', true)) {
+            return;
+        }
+
         if (! $this->app->routesAreCached()) {
             PageRoutes::register();
         }

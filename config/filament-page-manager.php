@@ -10,6 +10,9 @@ return [
     'route_name_prefix' => 'page',
     'route_middleware' => ['web'],
 
+    'register_routes' => true,
+    'register_pages' => true,
+
     'clear_obsolete_route_cache' => true,
     'refresh_route_cache' => true,
 
