@@ -145,7 +145,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
 
     protected function purgeOutdatedRouteCache(): void
     {
-        if (! config('arbory.clear_obsolete_route_cache')) {
+        if (! config('filament-page-manager.clear_obsolete_route_cache')) {
             return;
         }
 
