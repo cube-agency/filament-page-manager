@@ -29,6 +29,6 @@ it('can update a page', function () {
 
     assertDatabaseHas(Page::class, [
         'name' => 'Updated',
-        'slug' => 'updated',
+        'slug' => $newPage->slug,
     ]);
 });

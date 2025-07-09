@@ -16,7 +16,7 @@ it('can delete a page', function () {
     ]);
 
     Livewire::test(ListPages::class)
-        ->callAction('delete', [], ['row' => $newPage->getKey()]);
+        ->callAction('delete', [], ['row' => ['id' => $newPage->getKey()]]);
 
     assertDatabaseMissing(Page::class, [
         'name' => $newPage->name
