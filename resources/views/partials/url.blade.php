@@ -1,1 +1,1 @@
-<a href="{{ $url }}" class="text-primary-600" target="_blank">{{ $url }}</a>
+<a href="{{ $url }}" class="fi-color fi-color-primary fi-text-color-600 dark:fi-text-color-400 fi-link" target="_blank">{{ $url }}</a>

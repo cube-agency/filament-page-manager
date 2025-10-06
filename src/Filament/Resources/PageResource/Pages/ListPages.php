@@ -22,7 +22,7 @@ class ListPages extends TreeViewRecords
         return [
             Action::make('create')
                 ->authorize(fn () => $this->canCreate())
-                ->form($this->actionForm())
+                ->schema($this->actionSchema())
                 ->action(function (array $data): void {
                     $parameters = http_build_query($data);
 
@@ -33,24 +33,30 @@ class ListPages extends TreeViewRecords
 
     public function getRowActions(Model $row): array
     {
-        return [
-            ($this->createChildAction())(['row' => $row]),
+        $actions = [
             ($this->replicateAction())(['row' => $row]),
             ($this->editAction())(['row' => $row]),
             ($this->deleteAction())(['row' => $row]),
         ];
+
+        if ($row->depth < $this->getMaxDepth()) {
+            array_unshift($actions, ($this->createChildAction())(['row' => $row]));
+        }
+
+        return $actions;
     }
 
     public function createChildAction(): Action
     {
         return Action::make('createChild')
+            ->icon('heroicon-o-plus')
             ->authorize(fn () => $this->canCreate())
             ->fillForm(function (array $data, array $arguments) {
                 $data['parentId'] = $arguments['row']['id'];
 
                 return $data;
             })
-            ->form($this->actionForm())
+            ->schema($this->actionSchema())
             ->action(function (array $data) {
                 $parameters = http_build_query($data);
 
@@ -61,6 +67,7 @@ class ListPages extends TreeViewRecords
     public function replicateAction(): Action
     {
         return Action::make('replicate')
+            ->icon('heroicon-o-document-duplicate')
             ->authorize(function (array $arguments) {
                 $model = app(static::getModel());
                 $row = $model->newInstance($arguments['row'])
@@ -88,11 +95,11 @@ class ListPages extends TreeViewRecords
 
     public function canReplicate(Model $row): bool
     {
-        if (!$this->hasPermissions) {
+        if (! $this->hasPermissions) {
             return true;
         }
 
-        if (!$this->hasUserOnlyPolicy) {
+        if (! $this->hasUserOnlyPolicy) {
             return static::getResource()::canReplicate($row);
         }
 
@@ -103,6 +110,10 @@ class ListPages extends TreeViewRecords
     public function deleteAction(): Action
     {
         return Action::make('delete')
+            ->icon('heroicon-o-trash')
+            ->modalIcon('heroicon-o-trash')
+            ->color('danger')
+            ->requiresConfirmation()
             ->authorize(function (array $arguments) {
                 $model = app(static::getModel());
                 $row = $model->newInstance($arguments['row'])
@@ -110,9 +121,6 @@ class ListPages extends TreeViewRecords
 
                 return $this->canDelete($row);
             })
-            ->requiresConfirmation()
-            ->color('danger')
-            ->modalIcon('heroicon-o-trash')
             ->action(function (array $arguments) {
                 $row = $this->getModel()::find($arguments['row']['id']);
 
@@ -133,7 +141,7 @@ class ListPages extends TreeViewRecords
         });
     }
 
-    protected function actionForm(): array
+    protected function actionSchema(): array
     {
         return [
             Hidden::make('parentId'),
