@@ -1,4 +1,7 @@
-@import '../../vendor/filament/filament/resources/css/theme.css';
+@import 'tailwindcss';
+
+@source '../src/Resources/**/*.php';
+@source '../resources/**/*.blade.php';
 
 .inactive {
     @apply opacity-25;
