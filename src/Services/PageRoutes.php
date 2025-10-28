@@ -24,6 +24,7 @@ class PageRoutes
         }
 
         Page::query()
+            ->active()
             ->orderByDesc('_lft')
             ->get()
             ->each(function ($page) {
