@@ -4,6 +4,7 @@ use CubeAgency\FilamentPageManager\Models\Page;
 
 return [
     'table_name' => 'filament_pages',
+    'preview_table_name' => 'filament_page_previews',
 
     'model' => Page::class,
 
@@ -17,4 +18,5 @@ return [
     'refresh_route_cache' => true,
 
     'max_depth' => 5,
+    'preview' => false
 ];
