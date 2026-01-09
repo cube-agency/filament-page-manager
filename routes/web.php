@@ -3,6 +3,7 @@
 use CubeAgency\FilamentPageManager\Models\Page;
 use CubeAgency\FilamentPageManager\Models\PagePreview;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 if (config('filament-page-manager.previews.enabled', false)) {
     Route::get('pages/{token}/preview', function (Request $request, $token) {
