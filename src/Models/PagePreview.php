@@ -21,7 +21,7 @@ class PagePreview extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('filament-page-manager.preview_table_name');
+        $this->table = config('filament-page-manager.previews.table_name');
 
         parent::__construct($attributes);
     }
