@@ -41,7 +41,8 @@ class EditPage extends EditRecord
                         ]);
 
                     return redirect()->route('filament-page-manager.pages.preview', $preview->token);
-                }),
+                })
+                ->visible(config('filament-page-manager.previews.enabled', false)),
             ...parent::getHeaderActions(),
         ];
     }
