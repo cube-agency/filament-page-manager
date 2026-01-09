@@ -17,4 +17,9 @@ return [
     'refresh_route_cache' => true,
 
     'max_depth' => 5,
+
+    'previews' => [
+        'enabled' => false,
+        'table_name' => 'filament_page_previews',
+    ]
 ];

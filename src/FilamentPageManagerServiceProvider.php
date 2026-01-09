@@ -2,6 +2,7 @@
 
 namespace CubeAgency\FilamentPageManager;
 
+use CubeAgency\FilamentPageManager\Commands\ClearPagePreviewsCommand;
 use CubeAgency\FilamentPageManager\Commands\RouteCacheCommand;
 use CubeAgency\FilamentPageManager\Services\PageRoutes;
 use CubeAgency\FilamentPageManager\Services\PageRoutesCache;
@@ -54,6 +55,10 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
+
+        if (file_exists($package->basePath('/../routes/web.php'))) {
+            $package->hasRoute('web');
+        }
     }
 
     public function packageBooted(): void
@@ -69,6 +74,8 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
 
         $this->purgeOutdatedRouteCache();
         $this->refreshObsoleteRouteCache();
+
+        $this->runCommands();
     }
 
     protected function registerRoutes(): void
@@ -119,6 +126,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
     {
         return [
             'create_filament_pages_table',
+            'create_filament_page_previews_table',
         ];
     }
 
@@ -165,10 +173,18 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
         });
     }
 
+    protected function runCommands(): void
+    {
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            $schedule->command('filament-page-manager:clear-page-previews')->everySixHours();
+        });
+    }
+
     protected function getCommands(): array
     {
         return [
             RouteCacheCommand::class,
+            ClearPagePreviewsCommand::class,
         ];
     }
 }
