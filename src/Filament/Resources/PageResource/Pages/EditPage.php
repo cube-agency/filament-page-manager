@@ -24,26 +24,33 @@ class EditPage extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('preview')
-                ->label('Preview')
-                ->button()
-                ->icon('heroicon-o-eye')
-                ->action(function () {
-                    $record = $this->record;
-                    $data = $this->form->getState();
-
-                    $preview = PagePreview::query()
-                        ->create([
-                            'page_id' => $record->getKey(),
-                            'data' => $data,
-                            'token' => Str::random(32),
-                            'expires_at' => now()->addDay(),
-                        ]);
-
-                    return redirect()->route('filament-page-manager.pages.preview', $preview->token);
-                })
-                ->visible(config('filament-page-manager.previews.enabled', false)),
+            $this->getPreviewAction(),
             ...parent::getHeaderActions(),
         ];
+    }
+
+    public function getPreviewAction(): Action
+    {
+        return Action::make('preview')
+            ->label('Preview')
+            ->button()
+            ->icon('heroicon-o-eye')
+            ->action(function () {
+                $record = $this->record;
+                $data = $this->form->getState();
+
+                $preview = PagePreview::query()
+                    ->create([
+                        'page_id' => $record->getKey(),
+                        'data' => $data,
+                        'token' => Str::random(32),
+                        'expires_at' => now()->addDay(),
+                    ]);
+
+                $url = route('filament-page-manager.pages.preview', $preview->token);
+
+                $this->dispatch('filament-page-manager::preview', url: $url);
+            })
+            ->visible(config('filament-page-manager.previews.enabled', false));
     }
 }

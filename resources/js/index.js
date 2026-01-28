@@ -4,6 +4,10 @@ document.addEventListener('alpine:initializing', () => {
             window.addEventListener('filament-page-manager::copy-url', (event) => {
                 this.copyUrl(event.detail.url);
             });
+
+            window.addEventListener('filament-page-manager::preview', event => {
+                window.open(event.detail.url, '_blank');
+            });
         },
         copyUrl(url) {
             window.navigator.clipboard.writeText(url);
