@@ -34,8 +34,9 @@ class ListPages extends TreeViewRecords
     public function sortRows($data): void
     {
         parent::sortRows($data);
-
-        PageRoutesCache::setLastUpdateTimestamp(time());
+        if (! empty($data)) {
+            PageRoutesCache::setLastUpdateTimestamp(time());
+        }
     }
 
     public function getRowActions(Model $row): array
