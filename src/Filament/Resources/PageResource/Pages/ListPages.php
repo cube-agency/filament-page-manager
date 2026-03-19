@@ -79,14 +79,7 @@ class ListPages extends TreeViewRecords
             ->action(function (array $arguments) {
                 $row = $this->getModel()::find($arguments['row']['id']);
 
-                $newRow = $row->replicate();
-                if ($row->parent) {
-                    $newRow->appendToNode($row->parent);
-                }
-
-                $newRow->fill([
-                    'slug' => SlugGenerator::generate($row, $row->slug),
-                ])->save();
+                $this->replicateRecursively($row, $row->parent);
 
                 $this->redirect(static::$resource::getUrl());
             })
@@ -169,5 +162,26 @@ class ListPages extends TreeViewRecords
     public function getMaxDepth(): int
     {
         return config('filament-page-manager.max_depth');
+    }
+
+    protected function replicateRecursively(Model $page, ?Model $parent = null): void
+    {
+        $newPage = $page->replicate();
+
+        $newPage->setAttribute('parent_id', null);
+        $newPage->setAttribute('_lft', null);
+        $newPage->setAttribute('_rgt', null);
+
+        $newPage->slug = SlugGenerator::generate($page, $page->slug);
+
+        if ($parent) {
+            $newPage->appendToNode($parent)->save();
+        } else {
+            $newPage->save();
+        }
+
+        foreach ($page->children as $child) {
+            $this->replicateRecursively($child, $newPage);
+        }
     }
 }
