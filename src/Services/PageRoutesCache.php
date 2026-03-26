@@ -11,8 +11,6 @@ use ReflectionClass;
 
 class PageRoutesCache
 {
-    protected const CACHE_KEY = 'nodes.last_update';
-
     public static function cacheRoutes(): bool
     {
         $lockHandle = self::acquireLock();
@@ -129,14 +127,15 @@ class PageRoutesCache
         return app()->getCachedRoutesPath() . '.lock';
     }
 
+    /**
+     * @return resource|false
+     */
     protected static function acquireLock()
     {
         $lockPath = self::getLockPath();
         $directory = dirname($lockPath);
 
-        if (! is_dir($directory)) {
-            mkdir($directory, 0777, true);
-        }
+        @mkdir($directory, 0777, true);
 
         $handle = fopen($lockPath, 'c+');
 
@@ -153,6 +152,9 @@ class PageRoutesCache
         return $handle;
     }
 
+    /**
+     * @param resource|false $handle
+     */
     protected static function releaseLock($handle): void
     {
         if ($handle === false) {
@@ -199,6 +201,10 @@ class PageRoutesCache
     {
         $filesystem = app(Filesystem::class);
         $stubPath = dirname((new ReflectionClass(LaravelRouteCacheCommand::class))->getFileName()) . '/stubs/routes.stub';
+
+        if (! $filesystem->exists($stubPath)) {
+            throw new \RuntimeException("Laravel route cache stub not found at: {$stubPath}");
+        }
 
         return str_replace('{{routes}}', var_export($routes->compile(), true), $filesystem->get($stubPath));
     }
