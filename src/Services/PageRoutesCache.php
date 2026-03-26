@@ -13,6 +13,10 @@ class PageRoutesCache
 {
     public static function cacheRoutes(): bool
     {
+        if (! self::isRouteCacheObsolete()) {
+            return false;
+        }
+
         $lockHandle = self::acquireLock();
 
         if ($lockHandle === false) {
