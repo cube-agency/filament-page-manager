@@ -2,6 +2,4 @@
 
 namespace CubeAgency\FilamentPageManager;
 
-class FilamentPageManager
-{
-}
+class FilamentPageManager {}

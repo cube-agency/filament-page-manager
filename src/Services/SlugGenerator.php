@@ -13,13 +13,13 @@ class SlugGenerator
         $slug = Str::slug($value);
         $allSlugs = self::getRelatedSlugs($model, $slug, $id);
 
-        if (!$allSlugs->contains('slug', $slug)) {
+        if (! $allSlugs->contains('slug', $slug)) {
             return $slug;
         }
 
         for ($i = 1; $i <= 100; $i++) {
             $newSlug = $slug . '-' . $i;
-            if (!$allSlugs->contains('slug', $newSlug)) {
+            if (! $allSlugs->contains('slug', $newSlug)) {
                 return $newSlug;
             }
         }

@@ -29,24 +29,24 @@ class PageRoutesCache
     {
         $cachedRoutesTimestampPath = self::getCachedRoutesTimestampPath();
 
-        if (!file_exists($cachedRoutesTimestampPath)) {
+        if (! file_exists($cachedRoutesTimestampPath)) {
             return null;
         }
 
-        return (int)file_get_contents($cachedRoutesTimestampPath);
+        return (int) file_get_contents($cachedRoutesTimestampPath);
     }
 
     public static function isRouteCacheObsolete(): bool
     {
         $currentCacheTimestamp = self::getCurrentCacheTimestamp();
 
-        if (!$currentCacheTimestamp) {
+        if (! $currentCacheTimestamp) {
             return true;
         }
 
         $lastModifiedTimestamp = self::getLatestNodeUpdateTimestamp();
 
-        if (!$lastModifiedTimestamp) {
+        if (! $lastModifiedTimestamp) {
             return false;
         }
 
@@ -57,11 +57,11 @@ class PageRoutesCache
     {
         $pagesLastUpdated = self::getPagesLastUpdatedTimestampPath();
 
-        if (!file_exists($pagesLastUpdated)) {
+        if (! file_exists($pagesLastUpdated)) {
             return null;
         }
 
-        return (int)file_get_contents($pagesLastUpdated);
+        return (int) file_get_contents($pagesLastUpdated);
     }
 
     public static function setLastUpdateTimestamp(int $time): void

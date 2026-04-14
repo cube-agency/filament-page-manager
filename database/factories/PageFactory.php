@@ -18,7 +18,7 @@ class PageFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name),
-            'activate_at' => Carbon::now()->subMinute()
+            'activate_at' => Carbon::now()->subMinute(),
         ];
     }
 }

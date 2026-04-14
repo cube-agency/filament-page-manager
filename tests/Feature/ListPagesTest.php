@@ -12,11 +12,10 @@ it('can view empty pages list', function () {
 
 it('can view populated pages list', function () {
     $newPage = Page::factory()->create([
-        'template' => TestTemplate::class
+        'template' => TestTemplate::class,
     ]);
 
     Livewire::test(ListPages::class)
         ->assertStatus(200)
         ->assertSee($newPage->name);
 });
-

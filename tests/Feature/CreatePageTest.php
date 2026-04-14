@@ -4,6 +4,7 @@ use CubeAgency\FilamentPageManager\Filament\Resources\PageResource\Pages\CreateP
 use CubeAgency\FilamentPageManager\Models\Page;
 use CubeAgency\FilamentPageManager\Tests\Fixtures\Templates\TestTemplate;
 use Livewire\Livewire;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 it('can open create form', function () {
@@ -27,6 +28,6 @@ it('can create a page', function () {
     assertDatabaseHas(Page::class, [
         'name' => $newPage->name,
         'slug' => $newPage->slug,
-        'template' => TestTemplate::class
+        'template' => TestTemplate::class,
     ]);
 });
