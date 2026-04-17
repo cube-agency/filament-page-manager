@@ -41,8 +41,8 @@ php artisan vendor:publish --tag="filament-page-manager-config"
 * **table_name**: The database table name used for pages.
 * **route_name_prefix**: Prefix applied to generated route names.
 * **route_middleware**: Middleware applied to page routes.
-* **clear_obsolete_route_cache**: When set to true, clears obsolete routes from the cache (requires scheduler).
-* **refresh_route_cache**: When set to true, the route cache will be refreshed after changes.
+* **clear_obsolete_route_cache**: When set to true, obsolete route-cache metadata is cleared so the scheduler can rebuild routes without deleting the active cache during a request.
+* **refresh_route_cache**: When set to true, the route cache will be safely refreshed after changes by the scheduled package command.
 * **max_depth**: Controls the maximum nesting level of the tree view for pages.
 
 ## Usage
