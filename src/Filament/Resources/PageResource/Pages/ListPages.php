@@ -31,6 +31,16 @@ class ListPages extends TreeViewRecords
         ];
     }
 
+    public function sortRows($data): void
+    {
+        if (empty($data)) {
+            return;
+        }
+
+        parent::sortRows($data);
+        PageRoutesCache::setLastUpdateTimestamp(time());
+    }
+
     public function getRowActions(Model $row): array
     {
         $actions = [

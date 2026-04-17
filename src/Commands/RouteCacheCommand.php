@@ -22,12 +22,7 @@ class RouteCacheCommand extends Command
     public function handle(): void
     {
         $jsonOutput = $this->option('json');
-        $updated = false;
-
-        if (PageRoutesCache::isRouteCacheObsolete()) {
-            PageRoutesCache::cacheRoutes();
-            $updated = true;
-        }
+        $updated = PageRoutesCache::cacheRoutes();
 
         if ($jsonOutput) {
             $this->info(json_encode(['updated' => $updated]));
