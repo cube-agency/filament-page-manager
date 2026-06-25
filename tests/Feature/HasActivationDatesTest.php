@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use CubeAgency\FilamentPageManager\Models\Page;
 use CubeAgency\FilamentPageManager\Tests\Fixtures\Templates\TestTemplate;
 
@@ -11,7 +12,7 @@ it('parses activate_at as Carbon instance', function () {
 
     $page->refresh();
 
-    expect($page->activate_at)->toBeInstanceOf(\Carbon\Carbon::class)
+    expect($page->activate_at)->toBeInstanceOf(Carbon::class)
         ->and($page->activate_at->format('Y-m-d H:i:s'))->toBe('2025-01-15 10:30:00');
 });
 
@@ -23,7 +24,7 @@ it('parses expire_at as Carbon instance', function () {
 
     $page->refresh();
 
-    expect($page->expire_at)->toBeInstanceOf(\Carbon\Carbon::class)
+    expect($page->expire_at)->toBeInstanceOf(Carbon::class)
         ->and($page->expire_at->format('Y-m-d H:i:s'))->toBe('2025-12-31 23:59:59');
 });
 

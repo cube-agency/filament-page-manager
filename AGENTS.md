@@ -4,9 +4,10 @@ This file provides guidance for AI coding agents working in this repository.
 
 ## Project Overview
 
-A Laravel package providing a template-based page manager for FilamentPHP v4 admin panels.
+A Laravel package providing a template-based page manager for FilamentPHP v5 admin panels.
 Namespace: `CubeAgency\FilamentPageManager`
-Key dependencies: Filament v4, `cube-agency/filament-tree-view`, `cube-agency/filament-json`, `cube-agency/filament-template`, `spatie/laravel-package-tools`.
+Key dependencies: Filament v5, `cube-agency/filament-tree-view`, `cube-agency/filament-json`, `cube-agency/filament-template`, `spatie/laravel-package-tools`.
+Supports PHP 8.2+ and Laravel 11–13.
 
 ## Directory Structure
 
@@ -36,7 +37,6 @@ Key dependencies: Filament v4, `cube-agency/filament-tree-view`, `cube-agency/fi
 | `vendor/bin/pest tests/Feature/CreatePageTest.php` | Run a specific test file |
 | `vendor/bin/pest --filter="test_name_or_description"` | Run tests matching a pattern |
 | `composer test-coverage` | Run tests with coverage report |
-| `composer analyse` | Run PHPStan static analysis |
 | `composer format` | Format code with Laravel Pint |
 
 ### Frontend
@@ -112,7 +112,7 @@ vendor/bin/pest --filter="Clone"
 
 ### Testing (Pest)
 
-- All tests are Pest v2 using the `it()` function style.
+- All tests are Pest v4 using the `it()` function style.
 - Base test case is `tests\TestCase.php` extending Orchestra Testbench.
 - Use `Livewire::withQueryParams()` for testing Filament Livewire components.
 - Use `assertDatabaseHas()` from `Pest\Laravel` for database assertions.
