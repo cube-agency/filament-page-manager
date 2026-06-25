@@ -21,5 +21,5 @@ return [
     'previews' => [
         'enabled' => false,
         'table_name' => 'filament_page_previews',
-    ]
+    ],
 ];

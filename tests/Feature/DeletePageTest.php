@@ -4,21 +4,23 @@ use CubeAgency\FilamentPageManager\Filament\Resources\PageResource\Pages\ListPag
 use CubeAgency\FilamentPageManager\Models\Page;
 use CubeAgency\FilamentPageManager\Tests\Fixtures\Templates\TestTemplate;
 use Livewire\Livewire;
-use function Pest\Laravel\{assertDatabaseHas, assertDatabaseMissing};
+
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 it('can delete a page', function () {
     $newPage = Page::factory()->create([
-        'template' => TestTemplate::class
+        'template' => TestTemplate::class,
     ]);
 
     assertDatabaseHas(Page::class, [
-        'name' => $newPage->name
+        'name' => $newPage->name,
     ]);
 
     Livewire::test(ListPages::class)
         ->callAction('delete', [], ['row' => ['id' => $newPage->getKey()]]);
 
     assertDatabaseMissing(Page::class, [
-        'name' => $newPage->name
+        'name' => $newPage->name,
     ]);
 });

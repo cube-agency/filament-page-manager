@@ -4,11 +4,12 @@ use CubeAgency\FilamentPageManager\Filament\Resources\PageResource\Pages\EditPag
 use CubeAgency\FilamentPageManager\Models\Page;
 use CubeAgency\FilamentPageManager\Tests\Fixtures\Templates\TestTemplate;
 use Livewire\Livewire;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 it('can open edit form', function () {
     $newPage = Page::factory()->create([
-        'template' => TestTemplate::class
+        'template' => TestTemplate::class,
     ]);
 
     Livewire::test(EditPage::class, [$newPage->id])
@@ -17,7 +18,7 @@ it('can open edit form', function () {
 
 it('can update a page', function () {
     $newPage = Page::factory()->create([
-        'template' => TestTemplate::class
+        'template' => TestTemplate::class,
     ]);
 
     Livewire::test(EditPage::class, [$newPage->id])

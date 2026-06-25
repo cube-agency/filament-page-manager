@@ -4,11 +4,12 @@ use CubeAgency\FilamentPageManager\Filament\Resources\PageResource\Pages\ListPag
 use CubeAgency\FilamentPageManager\Models\Page;
 use CubeAgency\FilamentPageManager\Tests\Fixtures\Templates\TestTemplate;
 use Livewire\Livewire;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 it('can replicate a page', function () {
     $newPage = Page::factory()->create([
-        'template' => TestTemplate::class
+        'template' => TestTemplate::class,
     ]);
 
     Livewire::test(ListPages::class)

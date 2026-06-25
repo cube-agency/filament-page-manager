@@ -19,7 +19,7 @@ trait HasActivationDates
 
     public function getActiveAttribute(): bool
     {
-        return $this->hasActivated() && !$this->hasExpired();
+        return $this->hasActivated() && ! $this->hasExpired();
     }
 
     public function scopeActive(Builder $query): Builder
@@ -36,11 +36,11 @@ trait HasActivationDates
 
     public function hasExpired(): bool
     {
-        return !is_null($this->expire_at) && $this->expire_at->isPast();
+        return ! is_null($this->expire_at) && $this->expire_at->isPast();
     }
 
     public function hasActivated(): bool
     {
-        return !is_null($this->activate_at) && $this->activate_at->isPast();
+        return ! is_null($this->activate_at) && $this->activate_at->isPast();
     }
 }

@@ -27,7 +27,7 @@ class RouteCacheCommand extends Command
         if ($jsonOutput) {
             $this->info(json_encode(['updated' => $updated]));
         } elseif ($updated) {
-            $this->info("Obsolete route cache refreshed");
+            $this->info('Obsolete route cache refreshed');
         }
     }
 }

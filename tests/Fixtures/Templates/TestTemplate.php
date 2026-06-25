@@ -10,7 +10,7 @@ class TestTemplate extends FilamentTemplate
     public function schema(): array
     {
         return [
-            Textarea::make('textarea')
+            Textarea::make('textarea'),
         ];
     }
 }
