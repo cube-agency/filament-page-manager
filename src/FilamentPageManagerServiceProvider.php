@@ -158,7 +158,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
         }
 
         if ($this->app->routesAreCached() && PageRoutesCache::isRouteCacheObsolete()) {
-            PageRoutesCache::clearCache();
+            PageRoutesCache::clearCacheTimestamp();
         }
     }
 
@@ -169,7 +169,7 @@ class FilamentPageManagerServiceProvider extends PackageServiceProvider
         }
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $schedule->command('filament-page-manager:route-cache')->everyMinute();
+            $schedule->command('filament-page-manager:route-cache')->everyMinute()->withoutOverlapping();
         });
     }
 
